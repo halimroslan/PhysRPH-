@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Phase 3: Primitive Definition
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Validation Helpers ---
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email', 'generationCount', 'hasCompletedSurvey', 'createdAt', 'updatedAt'])
+        && data.keys().size() == 6
+        && data.uid is string && data.uid.size() <= 128
+        && data.email is string && data.email.size() <= 256
+        && data.generationCount is number && data.generationCount >= 0
+        && data.hasCompletedSurvey is bool
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidSurvey(data) {
+      return data.keys().hasAll(['userId', 'responses', 'createdAt'])
+        && data.keys().size() == 3
+        && data.userId is string && data.userId.size() <= 128
+        && data.responses is map
+        && data.createdAt is timestamp;
+    }
+
+    function isValidStats(data) {
+      return data.keys().hasAll(['itemScores', 'itemCounts', 'updatedAt'])
+        && data.keys().size() == 3
+        && data.itemScores is map
+        && data.itemCounts is map
+        && data.updatedAt is timestamp;
+    }
+
+    // --- Collection Routes ---
+
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow create: if isOwner(userId) && isValidId(userId)
+        && isValidUser(incoming())
+        && incoming().uid == userId
+        && incoming().email == request.auth.token.email
+        && incoming().generationCount == 0
+        && incoming().hasCompletedSurvey == false
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      
+      allow update: if isOwner(userId) && isValidId(userId)
+        && isValidUser(incoming())
+        && incoming().uid == existing().uid
+        && incoming().email == existing().email
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          // Action: Increment Generation
+          (incoming().diff(existing()).affectedKeys().hasOnly(['generationCount', 'updatedAt'])
+           && incoming().generationCount == existing().generationCount + 1)
+          ||
+          // Action: Complete Survey
+          (incoming().diff(existing()).affectedKeys().hasOnly(['hasCompletedSurvey', 'updatedAt'])
+           && existing().hasCompletedSurvey == false
+           && incoming().hasCompletedSurvey == true)
+        );
+    }
+
+    match /surveys/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow create: if isOwner(userId) && isValidId(userId)
+        && isValidSurvey(incoming())
+        && incoming().userId == userId
+        && incoming().createdAt == request.time
+        && !exists(/databases/$(database)/documents/surveys/$(userId));
+    }
+
+    match /stats/{docId} {
+      allow get: if true; // Public stats
+      
+      allow create: if isSignedIn()
+        && docId == 'survey'
+        && isValidStats(incoming())
+        && incoming().updatedAt == request.time;
+
+      allow update: if isSignedIn()
+        && docId == 'survey'
+        && isValidStats(incoming())
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['itemScores', 'itemCounts', 'updatedAt']);
+    }
+  }
+}

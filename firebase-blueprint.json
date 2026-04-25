@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and usage metadata",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Authenticated user UID" },
+        "email": { "type": "string", "format": "email" },
+        "generationCount": { "type": "number", "description": "Number of RPH generations by the user" },
+        "hasCompletedSurvey": { "type": "boolean", "description": "Whether user has finished the survey" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp of creation" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp of last update" }
+      },
+      "required": ["uid", "email", "generationCount", "hasCompletedSurvey", "createdAt", "updatedAt"]
+    },
+    "SurveyResponse": {
+      "title": "SurveyResponse",
+      "description": "Individual survey response from a user",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "responses": {
+          "type": "object",
+          "description": "Map of survey item IDs to ratings (1-5)"
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "responses", "createdAt"]
+    },
+    "SurveyAggregate": {
+      "title": "SurveyAggregate",
+      "description": "Globally aggregated survey results for display",
+      "type": "object",
+      "properties": {
+        "itemScores": {
+          "type": "object",
+          "description": "Map of survey item IDs to total accumulated scores"
+        },
+        "itemCounts": {
+          "type": "object",
+          "description": "Map of survey item IDs to number of respondents"
+        },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["itemScores", "itemCounts", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Stores user profiles. Created on first login."
+    },
+    "surveys/{userId}": {
+      "schema": { "$ref": "#/entities/SurveyResponse" },
+      "description": "Stores user survey data. Document ID matches User UID."
+    },
+    "stats/survey": {
+      "schema": { "$ref": "#/entities/SurveyAggregate" },
+      "description": "Singleton document for global survey statistics."
+    }
+  }
+}
