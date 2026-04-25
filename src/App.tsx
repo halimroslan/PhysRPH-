@@ -791,22 +791,22 @@ ${suggestedActivityInstruction}
             <div className="flex overflow-x-auto pb-8 pt-4 px-4 md:px-0 gap-5 snap-x snap-mandatory" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               {PRODUCTS_DATA.map(p => (
                 <a href={p.link} target="_blank" rel="noopener noreferrer" key={p.title} className={`snap-always snap-start block shrink-0 w-[280px] h-[380px] rounded-[24px] overflow-hidden relative shadow-[2px_4px_12px_rgba(0,0,0,0.08)] ${p.bgClass} flex flex-col hover:scale-[1.02] transition-transform duration-300 cursor-pointer group`}>
-                  <div className="p-6 relative z-10 flex flex-col items-start w-full text-left">
+                  <div className="p-6 relative z-10 flex flex-col items-start w-full text-left pb-4">
                     {p.badge && <span className="text-[10px] font-bold tracking-widest uppercase mb-3 text-white mix-blend-overlay">{p.badge}</span>}
                     <h3 className={`text-[22px] font-bold tracking-tight leading-tight mb-2 ${p.textClass}`}>{p.title}</h3>
                   </div>
-                  <div 
-                    className="flex-1 w-full relative overflow-hidden"
-                    style={{ WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%)', maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%)' }}
-                  >
+                  <div className="flex-1 w-full pb-6 px-6 flex items-center justify-center pointer-events-none relative z-10">
                     {p.imgSrc ? (
-                      <>
-                        <img src={p.imgSrc} alt={p.title} className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105" onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }} />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none z-10 transition-opacity duration-500 mix-blend-multiply"></div>
-                        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10 mix-blend-overlay"></div>
-                      </>
+                      <div className="relative w-full h-full transition-transform duration-500 ease-out group-hover:-translate-y-2 group-hover:scale-105">
+                        <img 
+                          src={p.imgSrc} 
+                          alt={p.title} 
+                          className="w-full h-full object-contain rounded-md shadow-[0_8px_20px_rgba(0,0,0,0.25)]" 
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }} 
+                        />
+                      </div>
                     ) : null}
                   </div>
                 </a>
