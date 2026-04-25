@@ -10,11 +10,9 @@ export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 export const signInWithGoogle = async () => {
   const provider = new GoogleAuthProvider();
   try {
-    const result = await signInWithPopup(auth, provider);
-    return { user: result.user, error: null };
-  } catch (error: any) {
+    await signInWithPopup(auth, provider);
+  } catch (error) {
     console.error("Error signing in with Google: ", error);
-    return { user: null, error };
   }
 };
 

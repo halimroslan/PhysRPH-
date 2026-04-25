@@ -1,10 +1,10 @@
 {
-  "projectId": "physrph",
-  "appId": "1:172273253597:web:3a6b1ee6b415e92f7cef34",
-  "apiKey": "AIzaSyAvoX8Y7iBOmCQjh44tIu4Ad2k8HU8o1V8",
-  "authDomain": "physrph.firebaseapp.com",
-  "firestoreDatabaseId": "(default)",
-  "storageBucket": "physrph.firebasestorage.app",
-  "messagingSenderId": "172273253597",
+  "projectId": "gen-lang-client-0447592796",
+  "appId": "1:561699627534:web:738b608d2d00273ade125f",
+  "apiKey": "AIzaSyDJteMxjXdx-WKFamJRoPSUuxtSKcqquV0",
+  "authDomain": "gen-lang-client-0447592796.firebaseapp.com",
+  "firestoreDatabaseId": "ai-studio-0c6de856-5484-4069-afcf-33e45e0dd104",
+  "storageBucket": "gen-lang-client-0447592796.firebasestorage.app",
+  "messagingSenderId": "561699627534",
   "measurementId": ""
 }

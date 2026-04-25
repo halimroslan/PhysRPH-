@@ -82,17 +82,11 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
 
 async function testConnection() {
   try {
-    const testDoc = doc(db, 'stats', 'survey'); 
+    const testDoc = doc(db, 'stats', 'survey'); // Use an existing doc to test
     await getDocFromServer(testDoc);
     console.log("Firebase connection validated.");
-  } catch (error: any) {
-    // If it's a permission error or not found, the connection is actually working (it reached the server)
-    if (error.code === 'permission-denied' || error.code === 'not-found') {
-      console.log("Firebase connection validated (server reached).");
-      return;
-    }
-    
-    if (error.message && error.message.includes('the client is offline')) {
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('the client is offline')) {
       console.error("Please check your Firebase configuration or internet connection.");
     } else {
       console.error("Firebase connection test failed:", error);
@@ -203,8 +197,6 @@ export const SURVEY_ITEMS = [
 ];
 
 interface UserData {
-  uid: string;
-  email: string;
   generationCount: number;
   hasCompletedSurvey: boolean;
 }
@@ -217,7 +209,7 @@ export const PRODUCTS_DATA = [
     desc: "Kuasai keseluruhan konsep Fizik Tingkatan 4 dengan cepat.",
     bgClass: "bg-[#2a1b54]",
     textClass: "text-white",
-    imgSrc: "cheatnote4.jpg",
+    imgSrc: "/cheatnote4.jpg",
     link: "https://my.shp.ee/Z9NxEZss",
     buyText: "Dapatkan di Shopee"
   },
@@ -228,7 +220,7 @@ export const PRODUCTS_DATA = [
     desc: "Kuasai formula, definisi dan ruang catatan nota Fizik Tingkatan 5.",
     bgClass: "bg-[#e56b1f]",
     textClass: "text-white",
-    imgSrc: "cheatnote5.jpg",
+    imgSrc: "/cheatnote5.jpg",
     link: "https://my.shp.ee/Z9NxEZss",
     buyText: "Dapatkan di Shopee"
   },
@@ -239,7 +231,7 @@ export const PRODUCTS_DATA = [
     desc: "Dilengkapi modul digital & eksperimen berpandu.",
     bgClass: "bg-[#0f4c81]",
     textClass: "text-white",
-    imgSrc: "nilam4.jpg",
+    imgSrc: "/nilam4.jpg",
     link: "https://my.shp.ee/GxHgPKAq",
     buyText: "Dapatkan di Shopee"
   },
@@ -250,7 +242,7 @@ export const PRODUCTS_DATA = [
     desc: "Latihan format terkini untuk cemerlang SPM.",
     bgClass: "bg-[#b31b1b]",
     textClass: "text-white",
-    imgSrc: "nilam5.jpg",
+    imgSrc: "/nilam5.jpg",
     link: "https://my.shp.ee/GxHgPKAq",
     buyText: "Dapatkan di Shopee"
   },
@@ -261,7 +253,7 @@ export const PRODUCTS_DATA = [
     desc: "Peta konsep yang menarik dan berwarna-warni.",
     bgClass: "bg-[#f5f5f7]",
     textClass: "text-[#1d1d1f]",
-    imgSrc: "bunting.jpg",
+    imgSrc: "/bunting.jpg",
     link: "https://t.me/halimroslan",
     buyText: "Dapatkan di Telegram"
   },
@@ -272,7 +264,7 @@ export const PRODUCTS_DATA = [
     desc: "Jalankan simulasi dan eksperimen Fizik wajib secara interaktif.",
     bgClass: "bg-[#0f0c29]",
     textClass: "text-white",
-    imgSrc: "myphysicstutor.jpg",
+    imgSrc: "/myphysicstutor.jpg",
     link: "https://my-physics-tutor.vercel.app/",
     buyText: "Guna Aplikasi Web"
   },
@@ -283,7 +275,7 @@ export const PRODUCTS_DATA = [
     desc: "Analisis item pantas dengan kamera bimbit anda.",
     bgClass: "bg-white border border-[#d2d2d7]",
     textClass: "text-[#1d1d1f]",
-    imgSrc: "cikguscan.jpg",
+    imgSrc: "/cikguscan.jpg",
     link: "https://cikgu-scan.vercel.app",
     buyText: "Guna Aplikasi Web"
   },
@@ -294,26 +286,15 @@ export const PRODUCTS_DATA = [
     desc: "Uji kefahaman murid dengan cara yang menyeronokkan.",
     bgClass: "bg-[#4cc9f0]",
     textClass: "text-[#1d1d1f]",
-    imgSrc: "wowhoot.jpg",
+    imgSrc: "/wowhoot.jpg",
     link: "https://wowhoot.vercel.app",
     buyText: "Guna Aplikasi Web"
   }
 ];
 
-function getAssetUrl(path: string) {
-  if (!path) return "";
-  if (path.startsWith("http")) return path;
-  const baseUrl = (import.meta as any).env.BASE_URL || "/";
-  // Ensure baseUrl ends with / and path doesn't start with /
-  const base = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
-  const p = path.startsWith("/") ? path.slice(1) : path;
-  return `${base}${p}`;
-}
-
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const [loginError, setLoginError] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [showSurvey, setShowSurvey] = useState(false);
   const [surveyQuestions, setSurveyQuestions] = useState<any[]>([]);
@@ -820,12 +801,9 @@ ${suggestedActivityInstruction}
                   >
                     {p.imgSrc ? (
                       <>
-                        <img 
-                          src={getAssetUrl(p.imgSrc)} 
-                          alt={p.title} 
-                          className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105" 
-                          referrerPolicy="no-referrer"
-                        />
+                        <img src={p.imgSrc} alt={p.title} className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105" onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }} />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none z-10 transition-opacity duration-500 mix-blend-multiply"></div>
                         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10 mix-blend-overlay"></div>
                       </>
@@ -852,19 +830,7 @@ ${suggestedActivityInstruction}
             Log masuk menggunakan akaun Google untuk mencipta RPH Fizik yang pantas, mudah dan tepat.
           </p>
           <button
-            onClick={async () => {
-              setLoginError(null);
-              const { error } = await signInWithGoogle();
-              if (error) {
-                if (error.code === 'auth/popup-blocked') {
-                  setLoginError("Popup ditutup atau disekat oleh pelayar. Sila benarkan popup untuk log masuk.");
-                } else if (error.code === 'auth/cancelled-popup-request') {
-                   // Ignore user cancellation
-                } else {
-                  setLoginError("Gagal log masuk: " + (error.message || "Ralat tidak diketahui"));
-                }
-              }
-            }}
+            onClick={signInWithGoogle}
             className="inline-flex items-center justify-center h-[52px] px-8 rounded-full bg-[#1d1d1f] text-white text-[17px] font-medium hover:bg-[#333336] transition-all hover:scale-105 active:scale-95 shadow-md"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-3">
@@ -875,19 +841,6 @@ ${suggestedActivityInstruction}
             </svg>
             Log Masuk dengan Google
           </button>
-          
-          {loginError && (
-            <div className="mt-8 p-4 rounded-[16px] bg-red-50 border border-red-100 flex items-start gap-3 text-left max-w-sm mx-auto">
-              <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={18} />
-              <div>
-                <p className="text-[14px] font-semibold text-red-800 mb-0.5">Ralat Log Masuk</p>
-                <p className="text-[13px] text-red-600 mb-2 leading-relaxed">{loginError}</p>
-                <p className="text-[12px] text-red-500 italic leading-tight">
-                  Sila buka aplikasi ini dalam tab baru jika masalah popup berterusan.
-                </p>
-              </div>
-            </div>
-          )}
         </div>
       ) : (
       <main className="mx-auto max-w-[1200px] px-4 pb-24" id="config-section">
@@ -1196,12 +1149,7 @@ ${suggestedActivityInstruction}
                       <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-[#8a2be2]/10 to-transparent rounded-bl-full pointer-events-none" />
                       <div className="flex flex-col sm:flex-row items-center sm:items-stretch gap-8 relative z-10">
                         <div className="w-[140px] h-[186px] bg-[#f5f5f7] rounded-[12px] shadow-md border border-[#d2d2d7] overflow-hidden flex-shrink-0">
-                          <img 
-                            src={getAssetUrl(featuredProduct.imgSrc)} 
-                            alt={featuredProduct.title} 
-                            className="w-full h-full object-cover" 
-                            referrerPolicy="no-referrer"
-                          />
+                          <img src={featuredProduct.imgSrc} alt={featuredProduct.title} className="w-full h-full object-cover" />
                         </div>
                         <div className="flex flex-col justify-center text-center sm:text-left">
                           <div className="mb-5">
