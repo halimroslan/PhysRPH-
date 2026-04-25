@@ -307,6 +307,7 @@ function getAssetUrl(path: string) {
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [loginError, setLoginError] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [showSurvey, setShowSurvey] = useState(false);
   const [surveyQuestions, setSurveyQuestions] = useState<any[]>([]);
@@ -845,7 +846,19 @@ ${suggestedActivityInstruction}
             Log masuk menggunakan akaun Google untuk mencipta RPH Fizik yang pantas, mudah dan tepat.
           </p>
           <button
-            onClick={signInWithGoogle}
+            onClick={async () => {
+              setLoginError(null);
+              const { error } = await signInWithGoogle();
+              if (error) {
+                if (error.code === 'auth/popup-blocked') {
+                  setLoginError("Popup ditutup atau disekat oleh pelayar. Sila benarkan popup untuk log masuk.");
+                } else if (error.code === 'auth/cancelled-popup-request') {
+                   // Ignore user cancellation
+                } else {
+                  setLoginError("Gagal log masuk: " + (error.message || "Ralat tidak diketahui"));
+                }
+              }
+            }}
             className="inline-flex items-center justify-center h-[52px] px-8 rounded-full bg-[#1d1d1f] text-white text-[17px] font-medium hover:bg-[#333336] transition-all hover:scale-105 active:scale-95 shadow-md"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-3">
@@ -856,6 +869,19 @@ ${suggestedActivityInstruction}
             </svg>
             Log Masuk dengan Google
           </button>
+          
+          {loginError && (
+            <div className="mt-8 p-4 rounded-[16px] bg-red-50 border border-red-100 flex items-start gap-3 text-left max-w-sm mx-auto">
+              <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={18} />
+              <div>
+                <p className="text-[14px] font-semibold text-red-800 mb-0.5">Ralat Log Masuk</p>
+                <p className="text-[13px] text-red-600 mb-2 leading-relaxed">{loginError}</p>
+                <p className="text-[12px] text-red-500 italic leading-tight">
+                  Sila buka aplikasi ini dalam tab baru jika masalah popup berterusan.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
       <main className="mx-auto max-w-[1200px] px-4 pb-24" id="config-section">
