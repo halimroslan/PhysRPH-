@@ -82,11 +82,17 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
 
 async function testConnection() {
   try {
-    const testDoc = doc(db, 'stats', 'survey'); // Use an existing doc to test
+    const testDoc = doc(db, 'stats', 'survey'); 
     await getDocFromServer(testDoc);
     console.log("Firebase connection validated.");
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
+  } catch (error: any) {
+    // If it's a permission error or not found, the connection is actually working (it reached the server)
+    if (error.code === 'permission-denied' || error.code === 'not-found') {
+      console.log("Firebase connection validated (server reached).");
+      return;
+    }
+    
+    if (error.message && error.message.includes('the client is offline')) {
       console.error("Please check your Firebase configuration or internet connection.");
     } else {
       console.error("Firebase connection test failed:", error);
