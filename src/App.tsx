@@ -831,7 +831,7 @@ ${suggestedActivityInstruction}
             Log Masuk untuk Mula
           </h2>
           <p className="text-[17px] text-[#86868b] mb-10 max-w-md mx-auto">
-            Log masuk menggunakan akaun Google untuk mencipta RPH Fizik yang pantas, mudah dan tepat.
+            Log masuk menggunakan akaun Google untuk mencipta Draf RPH Fizik yang berkualiti dan memenuhi Fasa 5E (Bybee)
           </p>
           <button
             onClick={signInWithGoogle}
@@ -1157,7 +1157,7 @@ ${suggestedActivityInstruction}
                         </div>
                         <div className="flex flex-col justify-center text-center sm:text-left">
                           <div className="mb-5">
-                            <div className="text-[12px] font-bold tracking-wider text-[#8a2be2] mb-2 uppercase">PILIHAN SIR HALIM</div>
+                            <div className="text-[12px] font-bold tracking-wider text-[#8a2be2] mb-2 uppercase">Recommended by Sir Halim.</div>
                             <h4 className="text-[22px] font-semibold text-[#1d1d1f] leading-tight mb-3 line-clamp-2" title={featuredProduct.title}>{featuredProduct.title}</h4>
                             <p className="text-[15px] text-[#424245] leading-relaxed line-clamp-3" title={featuredProduct.desc}>{featuredProduct.desc}</p>
                           </div>
