@@ -31,7 +31,12 @@ import {
 import { kurikulum } from "./data";
 import { kurikulumEn } from "./dataEn";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+const apiKeys = [
+  process.env.GEMINI_API_KEY,
+  process.env.GEMINI_API_KEY2,
+  process.env.GEMINI_API_KEY3,
+  process.env.GEMINI_API_KEY4
+].filter(key => typeof key === 'string' && key.trim().length > 0) as string[];
 
 enum OperationType {
   CREATE = 'create',
@@ -571,33 +576,61 @@ ${suggestedActivityInstruction}
 - Semua simbol matematik guna font biasa.`;
 
     try {
-      const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
-        contents: userPrompt,
-        config: {
-          systemInstruction: systemInstruction,
-          temperature: 0.7,
-        },
-      });
+      let text = "";
+      let success = false;
+      let lastErrorMessage = "";
 
-      const text = response.text;
-      if (text) {
-        setRphOutput(text);
-        setTimeout(() => {
-          resultRef.current?.scrollIntoView({ behavior: "smooth" });
-        }, 100);
-        
-        if (userData && currentGenerationCount === 5 && !userData.hasCompletedSurvey) {
-          setTimeout(() => {
-            if (surveyQuestions.length === 0) {
-              const shuffled = [...SURVEY_ITEMS].sort(() => 0.5 - Math.random());
-              setSurveyQuestions(shuffled.slice(0, 5));
-            }
-            setShowSurvey(true);
-          }, 1500);
+      for (let i = 0; i < apiKeys.length; i++) {
+        try {
+          const aiInstance = new GoogleGenAI({ apiKey: apiKeys[i] });
+          const response = await aiInstance.models.generateContent({
+            model: "gemini-2.0-flash",
+            contents: userPrompt,
+            config: {
+              systemInstruction: systemInstruction,
+              temperature: 0.7,
+            },
+          });
+          
+          text = response.text || "";
+          if (text) {
+            success = true;
+            break;
+          } else {
+             throw new Error("Respons API tidak sah. Tiada data dikembalikan.");
+          }
+        } catch (err: any) {
+          const errorMessage = err?.message || String(err);
+          if (errorMessage.includes("429") || errorMessage.includes("Quota exceeded")) {
+             lastErrorMessage = errorMessage;
+             continue; // Triggers fallback to the next api key
+          } else {
+             throw err; // For other errors, do not retry
+          }
         }
-      } else {
-        throw new Error("Respons API tidak sah. Tiada data dikembalikan.");
+      }
+
+      if (!success) {
+        if (lastErrorMessage) {
+          throw new Error("429: " + lastErrorMessage); // trigger quota error block
+        } else {
+          throw new Error("Respons API tidak sah. Tiada data dikembalikan.");
+        }
+      }
+
+      setRphOutput(text);
+      setTimeout(() => {
+        resultRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+      
+      if (userData && currentGenerationCount === 5 && !userData.hasCompletedSurvey) {
+        setTimeout(() => {
+          if (surveyQuestions.length === 0) {
+            const shuffled = [...SURVEY_ITEMS].sort(() => 0.5 - Math.random());
+            setSurveyQuestions(shuffled.slice(0, 5));
+          }
+          setShowSurvey(true);
+        }, 1500);
       }
     } catch (err: any) {
       const errorMessage = err?.message || String(err);
