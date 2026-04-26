@@ -209,7 +209,7 @@ export const PRODUCTS_DATA = [
     desc: "Kuasai keseluruhan konsep Fizik Tingkatan 4 dengan cepat.",
     bgClass: "bg-[#2a1b54]",
     textClass: "text-white",
-    imgSrc: "/cheatnote4.jpg",
+    imgSrc: "https://drive.google.com/thumbnail?id=1CdEgdWq3k2oOHVv1R5RBpLKEQRu_ozv5&sz=w1000",
     link: "https://my.shp.ee/Z9NxEZss",
     buyText: "Dapatkan di Shopee"
   },
@@ -220,7 +220,7 @@ export const PRODUCTS_DATA = [
     desc: "Kuasai formula, definisi dan ruang catatan nota Fizik Tingkatan 5.",
     bgClass: "bg-[#e56b1f]",
     textClass: "text-white",
-    imgSrc: "/cheatnote5.jpg",
+    imgSrc: "https://drive.google.com/thumbnail?id=1_37GknTLdt21dV3bBfWkXVffXi6_FbNB&sz=w1000",
     link: "https://my.shp.ee/Z9NxEZss",
     buyText: "Dapatkan di Shopee"
   },
@@ -231,7 +231,7 @@ export const PRODUCTS_DATA = [
     desc: "Dilengkapi modul digital & eksperimen berpandu.",
     bgClass: "bg-[#0f4c81]",
     textClass: "text-white",
-    imgSrc: "/nilam4.jpg",
+    imgSrc: "https://drive.google.com/thumbnail?id=1iDZz_hzu_UoLvhevHKe0gsOmHSgz66VS&sz=w1000",
     link: "https://my.shp.ee/GxHgPKAq",
     buyText: "Dapatkan di Shopee"
   },
@@ -242,7 +242,7 @@ export const PRODUCTS_DATA = [
     desc: "Latihan format terkini untuk cemerlang SPM.",
     bgClass: "bg-[#b31b1b]",
     textClass: "text-white",
-    imgSrc: "/nilam5.jpg",
+    imgSrc: "https://drive.google.com/thumbnail?id=17d5fqIwdoLOUBjmdYiIv--aA2OMflxS1&sz=w1000",
     link: "https://my.shp.ee/GxHgPKAq",
     buyText: "Dapatkan di Shopee"
   },
@@ -253,7 +253,7 @@ export const PRODUCTS_DATA = [
     desc: "Peta konsep yang menarik dan berwarna-warni.",
     bgClass: "bg-[#f5f5f7]",
     textClass: "text-[#1d1d1f]",
-    imgSrc: "/bunting.jpg",
+    imgSrc: "https://drive.google.com/thumbnail?id=12gjs9j0Lc9GIBodWk0bx1z_GB4jnbYJW&sz=w1000",
     link: "https://t.me/halimroslan",
     buyText: "Dapatkan di Telegram"
   },
@@ -264,7 +264,7 @@ export const PRODUCTS_DATA = [
     desc: "Jalankan simulasi dan eksperimen Fizik wajib secara interaktif.",
     bgClass: "bg-[#0f0c29]",
     textClass: "text-white",
-    imgSrc: "/myphysicstutor.jpg",
+    imgSrc: "https://drive.google.com/thumbnail?id=1xfQJl7EFfNg2ppuTECjVg1tV_D4Akk_G&sz=w1000",
     link: "https://my-physics-tutor.vercel.app/",
     buyText: "Guna Aplikasi Web"
   },
@@ -275,7 +275,7 @@ export const PRODUCTS_DATA = [
     desc: "Analisis item pantas dengan kamera bimbit anda.",
     bgClass: "bg-white border border-[#d2d2d7]",
     textClass: "text-[#1d1d1f]",
-    imgSrc: "/cikguscan.jpg",
+    imgSrc: "https://drive.google.com/thumbnail?id=1miW-NqwEv73mWp9KgHKLDg0-RhOys0Kk&sz=w1000",
     link: "https://cikgu-scan.vercel.app",
     buyText: "Guna Aplikasi Web"
   },
@@ -286,7 +286,7 @@ export const PRODUCTS_DATA = [
     desc: "Uji kefahaman murid dengan cara yang menyeronokkan.",
     bgClass: "bg-[#4cc9f0]",
     textClass: "text-[#1d1d1f]",
-    imgSrc: "/wowhoot.jpg",
+    imgSrc: "https://drive.google.com/thumbnail?id=1v_KZDxDRqWH7-2Jx4f9OTpFOeFlsqPG5&sz=w1000",
     link: "https://wowhoot.vercel.app",
     buyText: "Guna Aplikasi Web"
   }
