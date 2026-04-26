@@ -788,8 +788,11 @@ ${suggestedActivityInstruction}
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#e55d04] to-[#ff3b5c]">The latest.</span> Recommended by Sir Halim.
             </h2>
             
-            <div className="flex overflow-x-auto pb-8 pt-4 px-4 md:px-0 gap-5 snap-x snap-mandatory" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              {PRODUCTS_DATA.map(p => (
+            <div className="relative w-full">
+              <div className="absolute left-0 top-0 bottom-8 w-8 md:w-24 bg-gradient-to-r from-[#f5f5f7] to-transparent z-20 pointer-events-none rounded-l-2xl" />
+              <div className="absolute right-0 top-0 bottom-8 w-8 md:w-24 bg-gradient-to-l from-[#f5f5f7] to-transparent z-20 pointer-events-none rounded-r-2xl" />
+              <div className="flex overflow-x-auto pb-8 pt-4 px-4 md:px-0 gap-5 snap-x snap-mandatory hide-scroll" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                {PRODUCTS_DATA.map(p => (
                 <a href={p.link} target="_blank" rel="noopener noreferrer" key={p.title} className={`snap-always snap-start block shrink-0 w-[280px] h-[380px] rounded-[24px] overflow-hidden relative shadow-[2px_4px_12px_rgba(0,0,0,0.08)] ${p.bgClass} flex flex-col hover:scale-[1.02] transition-transform duration-300 cursor-pointer group`}>
                   <div className="p-6 relative z-10 flex flex-col items-start w-full text-left pb-4">
                     {p.badge && <span className="text-[10px] font-bold tracking-widest uppercase mb-3 text-white mix-blend-overlay">{p.badge}</span>}
@@ -811,6 +814,7 @@ ${suggestedActivityInstruction}
                   </div>
                 </a>
               ))}
+              </div>
             </div>
           </div>
         </div>
