@@ -335,6 +335,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
   const [showCurriculumModal, setShowCurriculumModal] = useState<string | null>(null);
+  const [showServer2, setShowServer2] = useState(false);
 
   const resultRef = useRef<HTMLDivElement>(null);
 
@@ -1094,10 +1095,20 @@ ${suggestedActivityInstruction}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="flex items-start gap-3 rounded-[12px] bg-[#fff5f5] p-4 border border-[#ffcfcf]"
+                  className="flex flex-col gap-3 rounded-[12px] bg-[#fff5f5] p-4 border border-[#ffcfcf]"
                 >
-                  <AlertCircle size={18} className="text-[#e30000] mt-0.5 shrink-0" />
-                  <p className="text-[13px] leading-relaxed text-[#8a0000]">{error}</p>
+                  <div className="flex items-start gap-3">
+                    <AlertCircle size={18} className="text-[#e30000] mt-0.5 shrink-0" />
+                    <p className="text-[13px] leading-relaxed text-[#8a0000] flex-1">{error}</p>
+                  </div>
+                  {(error.includes("had penggunaan API") || error.includes("API usage limit")) && (
+                    <button 
+                      onClick={() => setShowServer2(true)}
+                      className="ml-7 self-start px-4 py-2 bg-[#ff3b30] text-white text-[13px] font-semibold rounded-lg hover:bg-[#e30000] transition-colors shadow-sm"
+                    >
+                      Buka Server 2 / Open Server 2
+                    </button>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -1450,6 +1461,32 @@ ${suggestedActivityInstruction}
                 })}
               </div>
             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showServer2 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-white flex flex-col"
+          >
+            <div className="absolute top-4 right-6 z-[101]">
+              <button 
+                onClick={() => setShowServer2(false)}
+                className="w-10 h-10 rounded-full flex border shadow-sm border-[rgba(0,0,0,0.1)] bg-white text-[#1d1d1f] items-center justify-center hover:bg-[#f5f5f7] transition-colors"
+                title="Tutup / Close"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <iframe 
+              src="https://phys-rph-2.vercel.app/" 
+              className="w-full h-full border-0 flex-1" 
+              title="PhysRPH+ Server 2"
+            />
           </motion.div>
         )}
       </AnimatePresence>
