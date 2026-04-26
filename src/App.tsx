@@ -197,8 +197,12 @@ export const SURVEY_ITEMS = [
 ];
 
 interface UserData {
+  uid: string;
+  email: string;
   generationCount: number;
   hasCompletedSurvey: boolean;
+  createdAt?: any;
+  updatedAt?: any;
 }
 
 export const PRODUCTS_DATA = [
@@ -358,6 +362,8 @@ export default function App() {
         handleFirestoreError(err, OperationType.GET, statsPath);
       }
     };
+    
+    fetchSurveyStats();
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
@@ -380,7 +386,6 @@ export default function App() {
             await setDoc(userRef, newUserData);
             setUserData(newUserData as any);
           }
-          fetchSurveyStats();
         } catch (err) {
           handleFirestoreError(err, OperationType.WRITE, userPath);
         }
@@ -1211,19 +1216,24 @@ ${suggestedActivityInstruction}
                 Maklum Balas Pengguna <span className="text-[#86868b] font-normal italic text-[14px]">User Feedback</span>
               </h3>
               <div className="space-y-5">
-                {SURVEY_ITEMS.slice(0, 5).map(item => {
-                  const score = surveyStats[item.id] || 0;
-                  const percentage = Math.min((score / 5) * 100, 100);
+                {SURVEY_ITEMS.map(item => ({
+                  ...item,
+                  score: surveyStats[item.id] || 0
+                }))
+                .filter(item => item.score > 0)
+                .sort((a, b) => b.score - a.score)
+                .map(item => {
+                  const percentage = Math.min((item.score / 5) * 100, 100);
                   return (
                     <div key={item.id} className="w-full">
                       <div className="flex justify-between items-end mb-1.5">
                         <span className="text-[14px] font-medium text-[#1d1d1f]">{language === "English (DLP)" ? item.textEn : item.textBm}</span>
-                        <span className="text-[13px] font-bold text-[#0071e3]">{score > 0 ? score.toFixed(1) : '-'} <span className="text-[#86868b] font-normal text-[11px]">/ 5</span></span>
+                        <span className="text-[13px] font-bold text-[#0071e3]">{item.score.toFixed(1)} <span className="text-[#86868b] font-normal text-[11px]">/ 5</span></span>
                       </div>
                       <div className="h-2 w-full bg-[#f5f5f7] rounded-full overflow-hidden">
                         <div 
                           className="h-full bg-[#0071e3] transition-all duration-1000 ease-out rounded-full" 
-                          style={{ width: `${score > 0 ? percentage : 0}%` }}
+                          style={{ width: `${percentage}%` }}
                         />
                       </div>
                     </div>
