@@ -31,12 +31,7 @@ import {
 import { kurikulum } from "./data";
 import { kurikulumEn } from "./dataEn";
 
-const apiKeys = [
-  process.env.GEMINI_API_KEY,
-  process.env.GEMINI_API_KEY2,
-  process.env.GEMINI_API_KEY3,
-  process.env.GEMINI_API_KEY4
-].filter(key => typeof key === 'string' && key.trim().length > 0) as string[];
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
 enum OperationType {
   CREATE = 'create',
@@ -340,7 +335,6 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
   const [showCurriculumModal, setShowCurriculumModal] = useState<string | null>(null);
-  const [showServer2, setShowServer2] = useState(false);
 
   const resultRef = useRef<HTMLDivElement>(null);
 
@@ -576,61 +570,33 @@ ${suggestedActivityInstruction}
 - Semua simbol matematik guna font biasa.`;
 
     try {
-      let text = "";
-      let success = false;
-      let lastErrorMessage = "";
+      const response = await ai.models.generateContent({
+        model: "gemini-1.5-flash",
+        contents: userPrompt,
+        config: {
+          systemInstruction: systemInstruction,
+          temperature: 0.7,
+        },
+      });
 
-      for (let i = 0; i < apiKeys.length; i++) {
-        try {
-          const aiInstance = new GoogleGenAI({ apiKey: apiKeys[i] });
-          const response = await aiInstance.models.generateContent({
-            model: "gemini-2.0-flash",
-            contents: userPrompt,
-            config: {
-              systemInstruction: systemInstruction,
-              temperature: 0.7,
-            },
-          });
-          
-          text = response.text || "";
-          if (text) {
-            success = true;
-            break;
-          } else {
-             throw new Error("Respons API tidak sah. Tiada data dikembalikan.");
-          }
-        } catch (err: any) {
-          const errorMessage = err?.message || String(err);
-          if (errorMessage.includes("429") || errorMessage.includes("Quota exceeded")) {
-             lastErrorMessage = errorMessage;
-             continue; // Triggers fallback to the next api key
-          } else {
-             throw err; // For other errors, do not retry
-          }
-        }
-      }
-
-      if (!success) {
-        if (lastErrorMessage) {
-          throw new Error("429: " + lastErrorMessage); // trigger quota error block
-        } else {
-          throw new Error("Respons API tidak sah. Tiada data dikembalikan.");
-        }
-      }
-
-      setRphOutput(text);
-      setTimeout(() => {
-        resultRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-      
-      if (userData && currentGenerationCount === 5 && !userData.hasCompletedSurvey) {
+      const text = response.text;
+      if (text) {
+        setRphOutput(text);
         setTimeout(() => {
-          if (surveyQuestions.length === 0) {
-            const shuffled = [...SURVEY_ITEMS].sort(() => 0.5 - Math.random());
-            setSurveyQuestions(shuffled.slice(0, 5));
-          }
-          setShowSurvey(true);
-        }, 1500);
+          resultRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+        
+        if (userData && currentGenerationCount === 5 && !userData.hasCompletedSurvey) {
+          setTimeout(() => {
+            if (surveyQuestions.length === 0) {
+              const shuffled = [...SURVEY_ITEMS].sort(() => 0.5 - Math.random());
+              setSurveyQuestions(shuffled.slice(0, 5));
+            }
+            setShowSurvey(true);
+          }, 1500);
+        }
+      } else {
+        throw new Error("Respons API tidak sah. Tiada data dikembalikan.");
       }
     } catch (err: any) {
       const errorMessage = err?.message || String(err);
@@ -1128,20 +1094,10 @@ ${suggestedActivityInstruction}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="flex flex-col gap-3 rounded-[12px] bg-[#fff5f5] p-4 border border-[#ffcfcf]"
+                  className="flex items-start gap-3 rounded-[12px] bg-[#fff5f5] p-4 border border-[#ffcfcf]"
                 >
-                  <div className="flex items-start gap-3">
-                    <AlertCircle size={18} className="text-[#e30000] mt-0.5 shrink-0" />
-                    <p className="text-[13px] leading-relaxed text-[#8a0000] flex-1">{error}</p>
-                  </div>
-                  {(error.includes("had penggunaan API") || error.includes("API usage limit")) && (
-                    <button 
-                      onClick={() => setShowServer2(true)}
-                      className="ml-7 self-start px-4 py-2 bg-[#ff3b30] text-white text-[13px] font-semibold rounded-lg hover:bg-[#e30000] transition-colors shadow-sm"
-                    >
-                      Buka Server 2 / Open Server 2
-                    </button>
-                  )}
+                  <AlertCircle size={18} className="text-[#e30000] mt-0.5 shrink-0" />
+                  <p className="text-[13px] leading-relaxed text-[#8a0000]">{error}</p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -1494,32 +1450,6 @@ ${suggestedActivityInstruction}
                 })}
               </div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {showServer2 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-white flex flex-col"
-          >
-            <div className="absolute top-4 right-6 z-[101]">
-              <button 
-                onClick={() => setShowServer2(false)}
-                className="w-10 h-10 rounded-full flex border shadow-sm border-[rgba(0,0,0,0.1)] bg-white text-[#1d1d1f] items-center justify-center hover:bg-[#f5f5f7] transition-colors"
-                title="Tutup / Close"
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <iframe 
-              src="https://phys-rph-2.vercel.app/" 
-              className="w-full h-full border-0 flex-1" 
-              title="PhysRPH+ Server 2"
-            />
           </motion.div>
         )}
       </AnimatePresence>
