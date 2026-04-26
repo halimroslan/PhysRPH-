@@ -571,7 +571,7 @@ ${suggestedActivityInstruction}
 
     try {
       const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-2.0-flash",
         contents: userPrompt,
         config: {
           systemInstruction: systemInstruction,
@@ -599,7 +599,12 @@ ${suggestedActivityInstruction}
         throw new Error("Respons API tidak sah. Tiada data dikembalikan.");
       }
     } catch (err: any) {
-      setError(err?.message || "Ralat tidak dijangka berlaku.");
+      const errorMessage = err?.message || String(err);
+      if (errorMessage.includes("429") || errorMessage.includes("Quota exceeded")) {
+        setError(language === "English (DLP)" ? "You have reached the API usage limit. Please wait a moment or try again tomorrow." : "Anda telah mencapai had penggunaan API. Sila tunggu sebentar atau cuba lagi esok.");
+      } else {
+        setError(errorMessage || "Ralat tidak dijangka berlaku.");
+      }
     } finally {
       setIsLoading(false);
     }
