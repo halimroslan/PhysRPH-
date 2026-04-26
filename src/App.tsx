@@ -1241,33 +1241,15 @@ ${suggestedActivityInstruction}
             <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-[rgba(0,0,0,0.1)] max-w-[150px]"></div>
           </div>
 
-          <div className="max-w-xl mx-auto bg-white/80 backdrop-blur-sm rounded-[32px] p-10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-[#e8e8ed] relative overflow-hidden">
+          <div className="max-w-xl mx-auto bg-white/30 backdrop-blur-md rounded-[32px] p-10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-white/60 relative overflow-hidden">
             {/* Subtle map pattern using radial gradients to mimic world map dots inside the card as well */}
             <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
             
             <div className="flex flex-col items-center relative z-10 text-center">
-            <div className="flex items-center justify-center gap-2.5 mb-6 bg-[#f0fdf4] px-4 py-1.5 rounded-full border border-[#bbf7d0]">
-              <div className="w-2.5 h-2.5 rounded-full bg-[#10b981] animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
-              <span className="text-[11px] font-bold tracking-widest text-[#059669] uppercase">Sedang Aktif</span>
-            </div>
-            
-            <div className="text-[96px] font-bold leading-none bg-clip-text text-transparent bg-gradient-to-br from-[#0071e3] via-[#8a2be2] to-[#ff3b5c] mb-2 tracking-tighter" style={{ textShadow: '0 10px 30px rgba(138,43,226,0.15)' }}>
-              8
-            </div>
-            <div className="text-[15px] font-medium text-[#1d1d1f] mb-10 flex items-center gap-1.5">
-              Jumlah Akses <span className="italic font-normal text-[#86868b]">Total Access</span>
-            </div>
-
-            <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-[#e8e8ed] to-transparent mb-10"></div>
-
-            <div className="text-[12px] font-bold tracking-[0.2em] text-[#86868b] uppercase mb-6 flex items-center gap-2">
-              Lokasi Pelawat <span className="italic font-medium normal-case tracking-normal">Visitor Locations</span>
-            </div>
-
             {/* Flag counter */}
-            <a href="https://info.flagcounter.com/Y3h1" target="_blank" rel="noopener noreferrer" className="block rounded-[12px] overflow-hidden border border-[#e8e8ed] shadow-sm hover:shadow-md transition-shadow bg-white p-2 group">
-              <img src="https://s11.flagcounter.com/count2/Y3h1/bg_FFFFFF/txt_1d1d1f/border_FFFFFF/columns_2/maxflags_10/viewers_0/labels_1/pageviews_1/flags_0/percent_0/" alt="Flag Counter" className="w-full max-w-[200px] opacity-90 group-hover:opacity-100 transition-opacity" />
-            </a>
+            <div className="block rounded-[12px] overflow-hidden border border-white/60 shadow-sm bg-white/50 backdrop-blur-md p-2 pointer-events-none inline-block">
+              <img src="https://s01.flagcounter.com/countxl/cIpz/bg_FFFFFF/txt_000000/border_CCCCCC/columns_2/maxflags_10/viewers_0/labels_1/pageviews_1/flags_0/percent_0/" alt="Flag Counter" className="w-[200px] opacity-90 mx-auto mix-blend-multiply" />
+            </div>
           </div>
         </div>
 
