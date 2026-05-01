@@ -119,8 +119,10 @@ function AccordionSelect({
             {label}
             {subtitle && <span className="text-[12px] italic font-normal text-[#86868b] ml-2">{subtitle}</span>}
           </span>
-          {value && !isOpen && (
-            <span className="block text-[15px] font-medium text-[#0071e3] mt-2 line-clamp-1">{selectedOption?.label || value}</span>
+          {!isOpen && (value || emptyText) && (
+            <span className={`block text-[15px] font-medium mt-2 line-clamp-1 ${value ? 'text-[#0071e3]' : 'text-[#86868b] italic'}`}>
+              {value ? (selectedOption?.label || value) : emptyText}
+            </span>
           )}
         </div>
         <ChevronDown 
@@ -401,14 +403,14 @@ export default function App() {
   useEffect(() => {
     const bOptions = Object.keys(kurikulum[tingkatan] || {});
     setBpOptions(bOptions);
-    setBp(bOptions[0] || "");
+    setBp("");
   }, [tingkatan]);
 
   useEffect(() => {
     if (bp && kurikulum[tingkatan]?.[bp]) {
       const sOptions = Object.keys(kurikulum[tingkatan][bp]);
       setSkOptions(sOptions);
-      setSk(sOptions[0] || "");
+      setSk("");
     } else {
       setSkOptions([]);
       setSk("");
@@ -419,7 +421,7 @@ export default function App() {
     if (sk && kurikulum[tingkatan]?.[bp]?.[sk]) {
       const pOptions = kurikulum[tingkatan][bp][sk];
       setSpOptions(pOptions);
-      setSelectedSps([pOptions[0] || "", "", "", "", ""]);
+      setSelectedSps(["", "", "", "", ""]);
     } else {
       setSpOptions([]);
       setSelectedSps(["", "", "", "", ""]);
@@ -902,6 +904,7 @@ ${suggestedActivityInstruction}
                 label="Bidang Pembelajaran"
                 subtitle="Learning Area"
                 value={bp}
+                emptyText="- Tiada / None -"
                 options={bpOptions.map((option, idx) => ({
                   value: option,
                   label: `${option} / ${Object.keys(kurikulumEn[tingkatan] || {})[idx]}`
@@ -914,6 +917,7 @@ ${suggestedActivityInstruction}
                 label="Standard Kandungan"
                 subtitle="Content Standard"
                 value={sk}
+                emptyText="- Tiada / None -"
                 options={skOptions.map((option, idx) => {
                   const bpIndex = bpOptions.indexOf(bp);
                   const enBp = Object.keys(kurikulumEn[tingkatan] || {})[bpIndex];
